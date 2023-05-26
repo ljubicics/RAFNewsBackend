@@ -35,6 +35,13 @@ public class News {
         this.news_views = 0;
     }
 
+    public News(String news_title, String news_text, long news_date_created, int news_views) {
+        this.news_title = news_title;
+        this.news_text = news_text;
+        this.news_date_created = news_date_created;
+        this.news_views = news_views;
+    }
+
     public News(String news_title, String news_text, long news_date_created, int news_views, User news_author, Category news_category) {
         this.news_title = news_title;
         this.news_text = news_text;

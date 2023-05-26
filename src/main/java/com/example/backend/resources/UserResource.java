@@ -43,13 +43,14 @@ public class UserResource {
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public User addUser(@Valid User user) {return this.userService.addUser(user);}
+    public User addUser(@Valid User user) {
+        return this.userService.addUser(user);
+    }
 
     @PATCH
     @Path("/{email}")
     @Produces(MediaType.APPLICATION_JSON)
-    public User updateUser(@Valid User newUser, @PathParam("email") String email)
-    {
+    public User updateUser(@Valid User newUser, @PathParam("email") String email) {
         return this.userService.updateUser(newUser, email);
     }
 

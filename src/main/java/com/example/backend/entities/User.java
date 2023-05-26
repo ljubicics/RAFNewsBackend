@@ -44,6 +44,14 @@ public class User {
         this.user_status = true;
     }
 
+    public User(String user_name, String user_last_name, String user_email, String user_type, boolean user_status) {
+        this.user_name = user_name;
+        this.user_last_name = user_last_name;
+        this.user_email = user_email;
+        this.user_type = user_type;
+        this.user_status = user_status;
+    }
+
     public User(String user_name, String user_last_name, String user_email, String user_type, boolean user_status, String user_password) {
         this.user_name = user_name;
         this.user_last_name = user_last_name;

@@ -8,7 +8,7 @@ public interface UserRepository {
     List<User> allUsers();
     User addUser(User user);
     User findUser(String email);
-    void userActivity(String email);
+    void userStatus(String email);
     User updateUser(User user, String email);
     void deleteUser(String email);
 }

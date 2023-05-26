@@ -101,7 +101,7 @@ public class MySqlUserRepository extends MySqlAbstractRepository implements User
     }
 
     @Override
-    public void userActivity(String email) {
+    public void userStatus(String email) {
 
     }
 
