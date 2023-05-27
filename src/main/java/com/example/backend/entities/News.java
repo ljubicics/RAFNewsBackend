@@ -35,7 +35,8 @@ public class News {
         this.news_views = 0;
     }
 
-    public News(String news_title, String news_text, long news_date_created, int news_views) {
+    public News(Integer news_id, String news_title, String news_text, long news_date_created, int news_views) {
+        this.news_id = news_id;
         this.news_title = news_title;
         this.news_text = news_text;
         this.news_date_created = news_date_created;

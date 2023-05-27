@@ -10,12 +10,12 @@ public interface NewsRepository {
     List<News> allNews();
     List<News> allNewsByVisits();
     News addNews(News news);
-    News updateNews(News news);
+    boolean updateNews(News news, int id);
     News findNews(Integer id);
     void deleteNews(Integer id);
-    List<News> allByAuthor(Integer authorId);
-    List<News> allByCategory(Integer categoryId);
-    List<News> allByTag(Integer tagId);
+    List<News> allNewsByAuthor(Integer authorId);
+    List<News> allNewsByCategory(Integer categoryId);
+    List<News> allNewsByTag(Integer tagId);
     List<Tag> allTagByNews(Integer newsId);
     List<Comment> allCommentsByNews(Integer newsId);
 }

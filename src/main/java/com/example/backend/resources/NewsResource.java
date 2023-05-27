@@ -37,4 +37,26 @@ public class NewsResource {
     public News findNews(@PathParam("id") int id) {
         return this.newsService.findNews(id);
     }
+
+    @DELETE
+    @Path("/delete/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public void delete(@PathParam("id") int id) {
+        this.newsService.deleteNews(id);
+    }
+
+    @PATCH
+    @Path("{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public boolean update(@Valid News news, @PathParam("id") int id) {return this.newsService.updateNews(news, id);}
+
+    @GET
+    @Path("allNewsByAuthor/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<News> allNewsByAuthor(@PathParam("id") int id) {return this.newsService.allNewsByAuthor(id);}
+
+    @GET
+    @Path("allNewsByCategory/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<News> allNewsByCategory(@PathParam("id") int id) {return this.newsService.allNewsByCategory(id);}
 }
