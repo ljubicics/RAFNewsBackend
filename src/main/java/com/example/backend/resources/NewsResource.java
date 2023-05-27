@@ -30,4 +30,11 @@ public class NewsResource {
     public News addUser(@Valid News news) {
         return this.newsService.addNews(news);
     }
+
+    @GET
+    @Path("{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public News findNews(@PathParam("id") int id) {
+        return this.newsService.findNews(id);
+    }
 }

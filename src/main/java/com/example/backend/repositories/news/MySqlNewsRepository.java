@@ -5,10 +5,7 @@ import com.example.backend.repositories.MySqlAbstractRepository;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import javax.inject.Inject;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -109,7 +106,56 @@ public class MySqlNewsRepository extends MySqlAbstractRepository implements News
 
     @Override
     public News findNews(Integer id) {
-        return null;
+        News news = null;
+        User user;
+        Category category;
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSetNews = null;
+        ResultSet resultSetUser = null;
+        ResultSet resultSetCategory = null;
+        try {
+            connection = this.newConnection();
+            preparedStatement = connection.prepareStatement("SELECT * FROM News where news_id = ?");
+            preparedStatement.setInt(1, id);
+            resultSetNews = preparedStatement.executeQuery();
+            if (resultSetNews.next()) {
+                news = new News(resultSetNews.getString("news_title"), resultSetNews.getString("news_text"),
+                        resultSetNews.getLong("news_date_created"), resultSetNews.getInt("news_views"));
+                preparedStatement = connection.prepareStatement("SELECT * FROM User where user_id = ?");
+                preparedStatement.setInt(1, resultSetNews.getInt("news_author"));
+                resultSetUser = preparedStatement.executeQuery();
+                if(resultSetUser.next()) {
+                    user = new User(resultSetUser.getString("user_name"), resultSetUser.getString("user_last_name"),
+                            resultSetUser.getString("user_email"), resultSetUser.getString("user_type"),
+                            resultSetUser.getBoolean("user_status"));
+                    synchronized (this) {
+                        news.setNews_author(user);
+                    }
+                }
+                preparedStatement = connection.prepareStatement("SELECT * FROM Category where category_id = ?");
+                preparedStatement.setInt(1, resultSetNews.getInt("news_category"));
+                resultSetCategory = preparedStatement.executeQuery();
+                if(resultSetCategory.next()) {
+                    category = new Category(resultSetCategory.getString("category_name"), resultSetCategory.getString("category_description"));
+                    synchronized (this) {
+                        news.setNews_category(category);
+                    }
+                }
+            }
+            resultSetNews.close();
+            preparedStatement.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(preparedStatement);
+            this.closeResultSet(resultSetNews);
+            this.closeResultSet(resultSetUser);
+            this.closeResultSet(resultSetCategory);
+            this.closeConnection(connection);
+        }
+        return news;
     }
 
     @Override

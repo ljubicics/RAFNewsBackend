@@ -17,4 +17,8 @@ public class NewsService {
 
     public News addNews(News news) {return this.newsRepository.addNews(news);}
 
+    public News findNews(int id) {
+        return this.newsRepository.findNews(id);
+    }
+
 }
