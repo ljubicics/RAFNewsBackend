@@ -6,12 +6,11 @@ import com.example.backend.repositories.comment.CommentRepository;
 import com.example.backend.repositories.comment.MySqlCommentRepository;
 import com.example.backend.repositories.news.MySqlNewsRepository;
 import com.example.backend.repositories.news.NewsRepository;
+import com.example.backend.repositories.tag.MySqlTagRepository;
+import com.example.backend.repositories.tag.TagRepository;
 import com.example.backend.repositories.user.MySqlUserRepository;
 import com.example.backend.repositories.user.UserRepository;
-import com.example.backend.services.CategoryService;
-import com.example.backend.services.CommentService;
-import com.example.backend.services.NewsService;
-import com.example.backend.services.UserService;
+import com.example.backend.services.*;
 import org.glassfish.jersey.internal.inject.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
@@ -31,7 +30,9 @@ public class HelloApplication extends ResourceConfig {
                 this.bind(MySqlNewsRepository.class).to(NewsRepository.class).in(Singleton.class);
                 this.bind(MySqlCategoryRepository.class).to(CategoryRepository.class).in(Singleton.class);
                 this.bind(MySqlCommentRepository.class).to(CommentRepository.class).in(Singleton.class);
+                this.bind(MySqlTagRepository.class).to(TagRepository.class).in(Singleton.class);
 
+                this.bindAsContract(TagService.class);
                 this.bindAsContract(CommentService.class);
                 this.bindAsContract(CategoryService.class);
                 this.bindAsContract(NewsService.class);

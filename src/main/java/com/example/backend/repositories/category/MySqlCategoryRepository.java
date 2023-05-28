@@ -38,16 +38,22 @@ public class MySqlCategoryRepository extends MySqlAbstractRepository implements 
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
+        ResultSet initialResultSet = null;
         try {
             connection = this.newConnection();
-            String[] generatedColumns = {"category_id"};
-            preparedStatement = connection.prepareStatement("INSERT INTO Category (category_name, category_description) VALUES (?, ?)", generatedColumns);
+            preparedStatement = connection.prepareStatement("SELECT * FROM Category WHERE category_name = ?");
             preparedStatement.setString(1, category.getCategory_name());
-            preparedStatement.setString(2, category.getCategory_description());
-            preparedStatement.executeUpdate();
-            resultSet = preparedStatement.getGeneratedKeys();
-            if (resultSet.next()){
-                category.setCategory_id(resultSet.getInt(1));
+            initialResultSet = preparedStatement.executeQuery();
+            if (!initialResultSet.next()) {
+                String[] generatedColumns = {"category_id"};
+                preparedStatement = connection.prepareStatement("INSERT INTO Category (category_name, category_description) VALUES (?, ?)", generatedColumns);
+                preparedStatement.setString(1, category.getCategory_name());
+                preparedStatement.setString(2, category.getCategory_description());
+                preparedStatement.executeUpdate();
+                resultSet = preparedStatement.getGeneratedKeys();
+                if (resultSet.next()) {
+                    category.setCategory_id(resultSet.getInt(1));
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
