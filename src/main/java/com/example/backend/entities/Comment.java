@@ -14,22 +14,28 @@ public class Comment {
 
     @NotNull(message = "Title field is required")
     @NotEmpty(message = "Title field is required")
+    private String comment_text;
+
+    @NotNull(message = "Title field is required")
+    @NotEmpty(message = "Title field is required")
     private long comment_date_created;
 
-    private News comment_news;
+    private int comment_news;
 
     public Comment() {
     }
 
-    public Comment(String comment_author, long comment_date_created, News comment_news) {
+    public Comment(String comment_author, String comment_text, long comment_date_created, int comment_news) {
         this.comment_author = comment_author;
+        this.comment_text = comment_text;
         this.comment_date_created = comment_date_created;
         this.comment_news = comment_news;
     }
 
-    public Comment(Integer comment_id, String comment_author, long comment_date_created, News comment_news) {
+    public Comment(Integer comment_id, String comment_author, String comment_text, long comment_date_created, int comment_news) {
         this.comment_id = comment_id;
         this.comment_author = comment_author;
+        this.comment_text = comment_text;
         this.comment_date_created = comment_date_created;
         this.comment_news = comment_news;
     }
@@ -58,11 +64,19 @@ public class Comment {
         this.comment_date_created = comment_date_created;
     }
 
-    public News getComment_news() {
+    public int getComment_news() {
         return comment_news;
     }
 
-    public void setComment_news(News comment_news) {
+    public void setComment_news(int comment_news) {
         this.comment_news = comment_news;
+    }
+
+    public String getComment_text() {
+        return comment_text;
+    }
+
+    public void setComment_text(String comment_text) {
+        this.comment_text = comment_text;
     }
 }

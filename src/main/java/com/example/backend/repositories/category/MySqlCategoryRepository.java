@@ -5,7 +5,6 @@ import com.example.backend.repositories.MySqlAbstractRepository;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class MySqlCategoryRepository extends MySqlAbstractRepository implements CategoryRepository {
