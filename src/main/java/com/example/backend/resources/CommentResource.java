@@ -15,8 +15,9 @@ public class CommentResource {
     private CommentService commentService;
 
     @GET
+    @Path("/news/{news_id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Comment> allComments() {return this.commentService.allComments();}
+    public List<Comment> allComments(@PathParam("news_id") Integer news_id) {return this.commentService.allComments(news_id);}
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)

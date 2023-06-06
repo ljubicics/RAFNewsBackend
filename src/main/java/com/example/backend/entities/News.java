@@ -2,6 +2,8 @@ package com.example.backend.entities;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class News {
     @NotNull(message = "Title field is required")
@@ -21,11 +23,14 @@ public class News {
     private int news_views;
     private User news_author;
     private Category news_category;
+    private List<Tag> tags;
 
     public News() {
+        this.tags = new ArrayList<>();
     }
 
     public News(Integer news_id, String news_title, String news_text, long news_date_created, User news_author, Category news_category) {
+        this();
         this.news_id = news_id;
         this.news_title = news_title;
         this.news_text = news_text;
@@ -36,6 +41,7 @@ public class News {
     }
 
     public News(Integer news_id, String news_title, String news_text, long news_date_created, int news_views) {
+        this();
         this.news_id = news_id;
         this.news_title = news_title;
         this.news_text = news_text;
@@ -44,6 +50,7 @@ public class News {
     }
 
     public News(String news_title, String news_text, long news_date_created, int news_views, User news_author, Category news_category) {
+        this();
         this.news_title = news_title;
         this.news_text = news_text;
         this.news_date_created = news_date_created;
@@ -53,6 +60,7 @@ public class News {
     }
 
     public News(Integer news_id, String news_title, String news_text, long news_date_created, int news_views, User news_author, Category news_category) {
+        this();
         this.news_id = news_id;
         this.news_title = news_title;
         this.news_text = news_text;
@@ -60,6 +68,14 @@ public class News {
         this.news_views = news_views;
         this.news_author = news_author;
         this.news_category = news_category;
+    }
+
+    public List<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<Tag> tags) {
+        this.tags = tags;
     }
 
     public Integer getNews_id() {

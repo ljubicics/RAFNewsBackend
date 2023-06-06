@@ -8,6 +8,8 @@ import com.example.backend.repositories.news.MySqlNewsRepository;
 import com.example.backend.repositories.news.NewsRepository;
 import com.example.backend.repositories.tag.MySqlTagRepository;
 import com.example.backend.repositories.tag.TagRepository;
+import com.example.backend.repositories.tagnews.MySqlTagNewsRepository;
+import com.example.backend.repositories.tagnews.TagNewsRepository;
 import com.example.backend.repositories.user.MySqlUserRepository;
 import com.example.backend.repositories.user.UserRepository;
 import com.example.backend.services.*;
@@ -31,12 +33,14 @@ public class HelloApplication extends ResourceConfig {
                 this.bind(MySqlCategoryRepository.class).to(CategoryRepository.class).in(Singleton.class);
                 this.bind(MySqlCommentRepository.class).to(CommentRepository.class).in(Singleton.class);
                 this.bind(MySqlTagRepository.class).to(TagRepository.class).in(Singleton.class);
+                this.bind(MySqlTagNewsRepository.class).to(TagNewsRepository.class).in(Singleton.class);
 
                 this.bindAsContract(TagService.class);
                 this.bindAsContract(CommentService.class);
                 this.bindAsContract(CategoryService.class);
                 this.bindAsContract(NewsService.class);
                 this.bindAsContract(UserService.class);
+                this.bindAsContract(TagNewsService.class);
             }
         };
         register(binder);

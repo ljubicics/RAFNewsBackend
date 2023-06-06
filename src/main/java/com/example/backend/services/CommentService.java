@@ -10,7 +10,7 @@ public class CommentService {
     @Inject
     private CommentRepository commentRepository;
 
-    public List<Comment> allComments() {return this.commentRepository.allComments();}
+    public List<Comment> allComments(Integer news_id) {return this.commentRepository.allComments(news_id);}
 
     public Comment addComment(Comment comment) {return this.commentRepository.addComment(comment);}
 

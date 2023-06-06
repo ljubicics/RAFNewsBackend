@@ -1,13 +1,19 @@
 package com.example.backend.repositories.category;
 
 import com.example.backend.entities.Category;
+import com.example.backend.entities.News;
 import com.example.backend.repositories.MySqlAbstractRepository;
+import com.example.backend.repositories.news.NewsRepository;
 
+import javax.inject.Inject;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MySqlCategoryRepository extends MySqlAbstractRepository implements CategoryRepository {
+    @Inject
+    private NewsRepository newsRepository;
+
     @Override
     public List<Category> allCategories() {
         List<Category> categoryList = new ArrayList<>();
@@ -117,6 +123,11 @@ public class MySqlCategoryRepository extends MySqlAbstractRepository implements 
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
+            Category category = this.findCategory(name);
+            List<News> newsList = newsRepository.allNewsByCategory(category.getCategory_id());
+            if(newsList != null) {
+                return false;
+            }
             connection = this.newConnection();
             preparedStatement = connection.prepareStatement("DELETE FROM Category where category_name = ?");
             preparedStatement.setString(1, name);

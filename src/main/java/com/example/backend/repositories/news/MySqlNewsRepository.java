@@ -65,7 +65,53 @@ public class MySqlNewsRepository extends MySqlAbstractRepository implements News
 
     @Override
     public List<News> allNewsByVisits() {
-        return null;
+        List<News> newsList = new ArrayList<>();
+        Connection connection = null;
+        Statement statement = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSetNews = null;
+        ResultSet resultSetUser = null;
+        ResultSet resultSetCategory = null;
+        try {
+            connection = this.newConnection();
+            statement = connection.createStatement();
+            resultSetNews = statement.executeQuery("SELECT * FROM News ORDER BY news_views DESC");
+            for (int i = 1; i <= 11 && resultSetNews.next(); i++) {
+                News news = new News(resultSetNews.getInt("news_id"), resultSetNews.getString("news_title"), resultSetNews.getString("news_text"),
+                        resultSetNews.getLong("news_date_created"), resultSetNews.getInt("news_views"));
+                preparedStatement = connection.prepareStatement("SELECT * FROM User WHERE user_id = ?");
+                preparedStatement.setInt(1, resultSetNews.getInt("news_author"));
+                resultSetUser = preparedStatement.executeQuery();
+                while (resultSetUser.next()) {
+                    User user = new User(resultSetUser.getString("user_name"), resultSetUser.getString("user_last_name"),
+                            resultSetUser.getString("user_email"), resultSetUser.getString("user_type"),
+                            resultSetUser.getBoolean("user_status"));
+                    synchronized (this) {
+                        news.setNews_author(user);
+                    }
+                }
+                preparedStatement = connection.prepareStatement("SELECT * FROM Category WHERE category_id = ?");
+                preparedStatement.setString(1, resultSetNews.getString("news_category"));
+                resultSetCategory = preparedStatement.executeQuery();
+                while (resultSetCategory.next()) {
+                    Category category = new Category(resultSetCategory.getString("category_name"), resultSetCategory.getString("category_description"));
+                    synchronized (this) {
+                        news.setNews_category(category);
+                    }
+                }
+                newsList.add(news);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(statement);
+            this.closeResultSet(resultSetNews);
+            this.closeResultSet(resultSetUser);
+            this.closeResultSet(resultSetCategory);
+            this.closeConnection(connection);
+        }
+
+        return newsList;
     }
 
     @Override
@@ -139,6 +185,7 @@ public class MySqlNewsRepository extends MySqlAbstractRepository implements News
         ResultSet resultSetNews = null;
         ResultSet resultSetUser = null;
         ResultSet resultSetCategory = null;
+        ResultSet resultSetTags = null;
         try {
             connection = this.newConnection();
             preparedStatement = connection.prepareStatement("SELECT * FROM News where news_id = ?");
@@ -167,6 +214,22 @@ public class MySqlNewsRepository extends MySqlAbstractRepository implements News
                         news.setNews_category(category);
                     }
                 }
+                preparedStatement = connection.prepareStatement("SELECT * FROM TagNews WHERE news_id = ?");
+                preparedStatement.setInt(1, news.getNews_id());
+                resultSetUser = preparedStatement.executeQuery();
+                List<Integer> tagids = new ArrayList<>();
+                while(resultSetUser.next()){
+                    tagids.add(resultSetUser.getInt(1));
+                }
+                for (Integer tId : tagids){
+                    preparedStatement = connection.prepareStatement("SELECT * FROM Tag WHERE tag_id = ?");
+                    preparedStatement.setInt(1, tId);
+                    resultSetTags = preparedStatement.executeQuery();
+                    if (resultSetTags.next()){
+                        news.getTags().add( new Tag(resultSetTags.getInt(1), resultSetTags.getString("tag_keyword")));
+                    }
+                }
+
             }
             resultSetNews.close();
             preparedStatement.close();
@@ -176,7 +239,12 @@ public class MySqlNewsRepository extends MySqlAbstractRepository implements News
         } finally {
             this.closeStatement(preparedStatement);
             this.closeResultSet(resultSetNews);
-            this.closeResultSet(resultSetUser);
+            if (resultSetUser != null) {
+                this.closeResultSet(resultSetUser);
+            }
+            if (resultSetTags != null){
+                this.closeResultSet(resultSetTags);
+            }
             this.closeResultSet(resultSetCategory);
             this.closeConnection(connection);
         }

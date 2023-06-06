@@ -59,4 +59,9 @@ public class NewsResource {
     @Path("allNewsByCategory/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<News> allNewsByCategory(@PathParam("id") int id) {return this.newsService.allNewsByCategory(id);}
+
+    @GET
+    @Path("/popular")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<News> allNewsByViews(){return this.newsService.popularNews(); }
 }

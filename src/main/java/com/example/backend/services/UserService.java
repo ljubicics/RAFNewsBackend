@@ -11,6 +11,8 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 
 import javax.inject.Inject;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerRequestFilter;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -40,13 +42,19 @@ public class UserService {
                 .sign(algorithm);
     }
 
-    public boolean isAuthorized(String token) {
+    public boolean isAuthorized(String token, ContainerRequestContext containerRequestContext) {
         Algorithm algorithm = Algorithm.HMAC256("secret");
         JWTVerifier verifier = JWT.require(algorithm).build();
         DecodedJWT jwt = verifier.verify(token);
         String email = jwt.getSubject();
         User user = this.userRepository.findUser(email);
+        String type = jwt.getClaim("type").asString();
         if (user == null) {
+            return false;
+        }
+
+        // TODO: Namestiti da normal user i content creator ne mogu pristupati userima
+        if(containerRequestContext.getUriInfo().getPath().contains("users") && (type == null || type.equals("CONTENT_CREATOR"))) {
             return false;
         }
         return true;

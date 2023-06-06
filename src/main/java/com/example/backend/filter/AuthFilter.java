@@ -28,7 +28,7 @@ public class AuthFilter implements ContainerRequestFilter {
                 token = token.replace("Bearer ", "");
             }
 
-            if (!this.userService.isAuthorized(token)) {
+            if (!this.userService.isAuthorized(token, containerRequestContext)) {
                 containerRequestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
             }
         } catch (Exception exception) {
@@ -43,6 +43,9 @@ public class AuthFilter implements ContainerRequestFilter {
         List<Object> matchedResources = req.getUriInfo().getMatchedResources();
         for (Object matchedResource : matchedResources) {
             if (matchedResource instanceof NewsResource || matchedResource instanceof UserResource) {
+                if (req.getMethod().equals("GET") && matchedResource instanceof NewsResource){
+                    return false;
+                }
                 return true;
             }
         }

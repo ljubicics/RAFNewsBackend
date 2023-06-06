@@ -10,18 +10,19 @@ import java.util.List;
 
 public class MySqlCommentRepository extends MySqlAbstractRepository implements CommentRepository {
     @Override
-    public List<Comment> allComments() {
+    public List<Comment> allComments(Integer news_id) {
         List<Comment> commentList = new ArrayList<>();
         Connection connection = null;
-        Statement statement = null;
+        PreparedStatement statement = null;
         ResultSet resultSet = null;
         try {
             connection = this.newConnection();
-            statement = connection.createStatement();
-            resultSet = statement.executeQuery("SELECT * FROM Comment");
+            statement = connection.prepareStatement("SELECT * FROM Comment WHERE comment_news = ? ORDER BY comment_date_created DESC");
+            statement.setInt(1, news_id);
+            resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 Comment comment = new Comment(resultSet.getInt("comment_id"), resultSet.getString("comment_author"),
-                        resultSet.getString("comment_text"), resultSet.getLong("comment_date_created"), resultSet.getInt("comment_news"));
+                        resultSet.getString("comment_text"), resultSet.getLong("comment_date_created"), news_id);
                 commentList.add(comment);
             }
         } catch (Exception e) {
