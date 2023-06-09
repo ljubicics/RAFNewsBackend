@@ -1,6 +1,7 @@
 package com.example.backend.resources;
 
 import com.example.backend.entities.News;
+import com.example.backend.entities.Tag;
 import com.example.backend.services.TagNewsService;
 
 import javax.inject.Inject;
@@ -33,4 +34,19 @@ public class TagNewsResource {
     public List<News> allNewsWithTag(@PathParam("tag") Integer tag){
         return this.tagNewsService.allNewsWithTag(tag);
     }
+
+    @GET
+    @Path("/tagsForNews/{newsId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Tag> allTags(@PathParam("newsId") Integer newsId) {return this.tagNewsService.allTagsForNews(newsId);}
+
+    @PATCH
+    @Path("/updateTagNews/{newsId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public void update(@PathParam("newsId") Integer newsId) {this.tagNewsService.update(newsId);}
+
+    @DELETE
+    @Path("/delete/{newsId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public void delete(@PathParam("newsId") Integer newsID) {this.tagNewsService.delete(newsID);}
 }

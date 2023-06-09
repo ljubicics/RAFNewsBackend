@@ -9,4 +9,6 @@ public interface TagRepository {
     Tag addTag(Tag tag);
     Tag findTag(Integer id);
     boolean deleteTag(Integer id);
+
+    Tag updateTag(Integer id, Tag tag);
 }

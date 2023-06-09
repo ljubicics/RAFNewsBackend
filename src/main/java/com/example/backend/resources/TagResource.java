@@ -1,5 +1,6 @@
 package com.example.backend.resources;
 
+import com.example.backend.entities.Category;
 import com.example.backend.entities.Tag;
 import com.example.backend.services.TagService;
 
@@ -31,4 +32,9 @@ public class TagResource {
     @Path("/{tagId}")
     @Produces(MediaType.APPLICATION_JSON)
     public  Tag findTag(@PathParam("tagId") Integer tagId) {return this.tagService.findTag(tagId);}
+
+    @PATCH
+    @Path("/{tagId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Tag updateCategory(@PathParam("tagId") int tagId, @Valid Tag tag) {return this.tagService.updateTag(tagId, tag);}
 }

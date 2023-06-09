@@ -1,5 +1,6 @@
 package com.example.backend.services;
 
+import com.example.backend.entities.Category;
 import com.example.backend.entities.Tag;
 import com.example.backend.repositories.tag.TagRepository;
 
@@ -17,4 +18,7 @@ public class TagService {
     public boolean deleteTag(Integer id) {return this.tagRepository.deleteTag(id);}
 
     public Tag findTag(Integer id) {return this.tagRepository.findTag(id);}
+
+    public Tag updateTag(int tagId, Tag tag) {return this.tagRepository.updateTag(tagId, tag);}
+
 }

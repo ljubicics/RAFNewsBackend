@@ -78,8 +78,8 @@ public class MySqlTagRepository extends MySqlAbstractRepository implements TagRe
             preparedStatement.setInt(1, id);
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                Integer idTag = resultSet.getInt("id");
-                tag = new Tag(idTag, tag.getTag_keyword());
+                Integer idTag = resultSet.getInt("tag_id");
+                tag = new Tag(idTag, resultSet.getString("tag_keyword"));
             }
             resultSet.close();
             preparedStatement.close();
@@ -112,5 +112,27 @@ public class MySqlTagRepository extends MySqlAbstractRepository implements TagRe
             this.closeConnection(connection);
         }
         return true;
+    }
+
+    @Override
+    public Tag updateTag(Integer id, Tag tag) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            connection = this.newConnection();
+            preparedStatement = connection.prepareStatement("UPDATE Tag AS tag SET tag.tag_keyword = ? where tag.tag_id = ?");
+            preparedStatement.setString(1, tag.getTag_keyword());
+            preparedStatement.setInt(2, id);
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(preparedStatement);
+            this.closeConnection(connection);
+        }
+        tag.setTag_id(id);
+        return tag;
     }
 }

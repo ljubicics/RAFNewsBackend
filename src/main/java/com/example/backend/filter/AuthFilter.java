@@ -1,5 +1,6 @@
 package com.example.backend.filter;
 
+import com.example.backend.resources.CategoryResource;
 import com.example.backend.resources.NewsResource;
 import com.example.backend.resources.UserResource;
 import com.example.backend.services.UserService;

@@ -29,4 +29,5 @@ public class NewsService {
 
     public List<News> allNewsByCategory(int id) {return this.newsRepository.allNewsByCategory(id);}
     public List<News> popularNews(){ return this.newsRepository.allNewsByVisits(); }
+    public void updateViews(Integer newsId) {this.newsRepository.updateViews(newsId);}
 }

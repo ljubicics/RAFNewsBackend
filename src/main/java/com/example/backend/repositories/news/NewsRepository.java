@@ -18,4 +18,5 @@ public interface NewsRepository {
     List<News> allNewsByTag(Integer tagId);
     List<Tag> allTagByNews(Integer newsId);
     List<Comment> allCommentsByNews(Integer newsId);
+    void updateViews(Integer newsId);
 }

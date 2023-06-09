@@ -47,6 +47,13 @@ public class UserResource {
         return this.userService.addUser(user);
     }
 
+    @GET
+    @Path("/{email}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public User findUser(@PathParam("email") String email) {
+        return this.userService.findUser(email);
+    }
+
     @PATCH
     @Path("/{email}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -60,4 +67,9 @@ public class UserResource {
     public void delete(@PathParam("email") String email) {
         this.userService.deleteUser(email);
     }
+
+    @GET
+    @Path("/updateStatus/{email}")
+    public void changeStatus(@PathParam("email") String email) {this.userService.changeStatus(email);}
+
 }

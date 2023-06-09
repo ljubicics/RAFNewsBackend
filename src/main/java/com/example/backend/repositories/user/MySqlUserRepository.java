@@ -49,7 +49,7 @@ public class MySqlUserRepository extends MySqlAbstractRepository implements User
             preparedStatement.setString(1, user.getUser_name());
             preparedStatement.setString(2, user.getUser_last_name());
             preparedStatement.setString(3, user.getUser_email());
-            preparedStatement.setString(4, "NORMAL_USER");
+            preparedStatement.setString(4, user.getUser_type());
             preparedStatement.setBoolean(5, true);
             preparedStatement.setString(6, DigestUtils.sha256Hex(user.getUser_password()));
             preparedStatement.executeUpdate();
@@ -60,8 +60,12 @@ public class MySqlUserRepository extends MySqlAbstractRepository implements User
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            this.closeStatement(preparedStatement);
-            this.closeResultSet(resultSet);
+            if(preparedStatement != null) {
+                this.closeStatement(preparedStatement);
+            }
+            if(resultSet != null) {
+                this.closeResultSet(resultSet);
+            }
             this.closeConnection(connection);
         }
         return user;
@@ -79,12 +83,13 @@ public class MySqlUserRepository extends MySqlAbstractRepository implements User
             preparedStatement.setString(1, email);
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
+                Integer id = resultSet.getInt("user_id");
                 String firstName = resultSet.getString("user_name");
                 String lastName = resultSet.getString("user_last_name");
                 String password = resultSet.getString("user_password");
                 boolean status = resultSet.getBoolean("user_status");
                 String type = resultSet.getString("user_type");
-                user = new User(firstName, lastName, email, type, status, password);
+                user = new User(id, firstName, lastName, email, type, status, password);
             }
             resultSet.close();
             preparedStatement.close();
@@ -102,7 +107,33 @@ public class MySqlUserRepository extends MySqlAbstractRepository implements User
 
     @Override
     public void userStatus(String email) {
-
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        boolean status = false;
+        try {
+            connection = this.newConnection();
+            preparedStatement = connection.prepareStatement("SELECT * FROM User WHERE user_email = ?");
+            preparedStatement.setString(1, email);
+            resultSet = preparedStatement.executeQuery();
+            if(resultSet.next()) {
+                status = resultSet.getBoolean("user_status");
+            }
+            preparedStatement = connection.prepareStatement("UPDATE User SET User.user_status = ? WHERE user_email = ?");
+            preparedStatement.setBoolean(1, !status);
+            preparedStatement.setString(2, email);
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(preparedStatement);
+            if (resultSet != null) {
+                this.closeResultSet(resultSet);
+            }
+            this.closeConnection(connection);
+        }
     }
 
     @Override

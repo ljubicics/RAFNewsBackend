@@ -38,7 +38,7 @@ public class UserService {
                 .withExpiresAt(expiresAt)
                 .withSubject(email)
                 .withClaim("type", user.getUser_type())
-//                .withClaim("status", user.getStatus())
+                .withClaim("id", user.getUser_id())
                 .sign(algorithm);
     }
 
@@ -53,7 +53,9 @@ public class UserService {
             return false;
         }
 
-        // TODO: Namestiti da normal user i content creator ne mogu pristupati userima
+        if(containerRequestContext.getUriInfo().getPath().contains("update")) {
+            return true;
+        }
         if(containerRequestContext.getUriInfo().getPath().contains("users") && (type == null || type.equals("CONTENT_CREATOR"))) {
             return false;
         }
@@ -88,4 +90,11 @@ public class UserService {
     public void deleteUser(String email) {
         this.userRepository.deleteUser(email);
     }
+
+    public User findUser(String email) {
+        return this.userRepository.findUser(email);
+    }
+
+    public void changeStatus(String email) {this.userRepository.userStatus(email);}
+
 }

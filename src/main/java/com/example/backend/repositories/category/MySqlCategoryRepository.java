@@ -80,6 +80,7 @@ public class MySqlCategoryRepository extends MySqlAbstractRepository implements 
             preparedStatement = connection.prepareStatement("UPDATE Category AS cat SET cat.category_name = ?, cat.category_description = ?  where cat.category_id = ?");
             preparedStatement.setString(1, category.getCategory_name());
             preparedStatement.setString(2, category.getCategory_description());
+            preparedStatement.setInt(3, id);
             preparedStatement.executeUpdate();
             preparedStatement.close();
             connection.close();
@@ -122,23 +123,46 @@ public class MySqlCategoryRepository extends MySqlAbstractRepository implements 
     public boolean deleteCategory(String name) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
+        PreparedStatement preparedStatementNew = null;
+        ResultSet resultSet = null;
+        int id = 0;
         try {
-            Category category = this.findCategory(name);
-            List<News> newsList = newsRepository.allNewsByCategory(category.getCategory_id());
-            if(newsList != null) {
-                return false;
-            }
             connection = this.newConnection();
+            preparedStatementNew = connection.prepareStatement("SELECT * FROM Category where category_name = ?");
+            preparedStatementNew.setString(1, name);
+            resultSet = preparedStatementNew.executeQuery();
+            if(resultSet.next()) {
+                id = resultSet.getInt("category_id");
+            }
+
+            if(id != 0) {
+                preparedStatementNew = connection.prepareStatement("DELETE FROM Comment where comment_news = ?");
+                preparedStatementNew.setInt(1, id);
+                preparedStatementNew.executeUpdate();
+                preparedStatementNew = connection.prepareStatement("DELETE FROM News where news_category = ?");
+                preparedStatementNew.setInt(1, id);
+                preparedStatementNew.executeUpdate();
+            }
             preparedStatement = connection.prepareStatement("DELETE FROM Category where category_name = ?");
             preparedStatement.setString(1, name);
             preparedStatement.executeUpdate();
-            preparedStatement.close();
-            connection.close();
+
+
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            this.closeStatement(preparedStatement);
-            this.closeConnection(connection);
+            if(preparedStatementNew != null) {
+                this.closeStatement(preparedStatementNew);
+            }
+            if(resultSet != null) {
+                this.closeResultSet(resultSet);
+            }
+            if(preparedStatement != null) {
+                this.closeStatement(preparedStatement);
+            }
+            if(connection != null) {
+                this.closeConnection(connection);
+            }
         }
         return true;
     }

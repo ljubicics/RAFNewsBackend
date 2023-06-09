@@ -53,10 +53,18 @@ public class MySqlNewsRepository extends MySqlAbstractRepository implements News
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            this.closeStatement(statement);
-            this.closeResultSet(resultSetNews);
-            this.closeResultSet(resultSetUser);
-            this.closeResultSet(resultSetCategory);
+            if(statement != null) {
+                this.closeStatement(statement);
+            }
+            if(resultSetNews != null) {
+                this.closeResultSet(resultSetNews);
+            }
+            if(resultSetUser != null) {
+                this.closeResultSet(resultSetUser);
+            }
+            if(resultSetCategory != null) {
+                this.closeResultSet(resultSetCategory);
+            }
             this.closeConnection(connection);
         }
 
@@ -104,10 +112,18 @@ public class MySqlNewsRepository extends MySqlAbstractRepository implements News
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            this.closeStatement(statement);
-            this.closeResultSet(resultSetNews);
-            this.closeResultSet(resultSetUser);
-            this.closeResultSet(resultSetCategory);
+            if(statement != null) {
+                this.closeStatement(statement);
+            }
+            if(resultSetNews != null) {
+                this.closeResultSet(resultSetNews);
+            }
+            if(resultSetUser != null) {
+                this.closeResultSet(resultSetUser);
+            }
+            if(resultSetCategory != null) {
+                this.closeResultSet(resultSetCategory);
+            }
             this.closeConnection(connection);
         }
 
@@ -159,7 +175,7 @@ public class MySqlNewsRepository extends MySqlAbstractRepository implements News
             preparedStatement.setString(2, news.getNews_text());
             preparedStatement.setInt(3, news.getNews_author().getUser_id());
             preparedStatement.setInt(4, news.getNews_category().getCategory_id());
-            preparedStatement.setInt(5, news.getNews_id());
+            preparedStatement.setInt(5, id);
             preparedStatement.executeUpdate();
             preparedStatement.close();
             connection.close();
@@ -257,9 +273,16 @@ public class MySqlNewsRepository extends MySqlAbstractRepository implements News
         PreparedStatement preparedStatement = null;
         try {
             connection = this.newConnection();
+            preparedStatement = connection.prepareStatement("DELETE FROM TagNews WHERE news_id = ?");
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+            preparedStatement = connection.prepareStatement("DELETE FROM Comment where comment_news = ?");
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
             preparedStatement = connection.prepareStatement("DELETE FROM News where news_id = ?");
             preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
+
             preparedStatement.close();
             connection.close();
         } catch (SQLException e) {
@@ -366,6 +389,39 @@ public class MySqlNewsRepository extends MySqlAbstractRepository implements News
             this.closeConnection(connection);
         }
         return newsList;
+    }
+
+    @Override
+    public void updateViews(Integer newsId) {
+        Connection connection = null;
+        Statement statement = null;
+        PreparedStatement preparedStatement = null;
+        int views = 0;
+        ResultSet resultSetNews = null;
+        try {
+            connection = this.newConnection();
+            preparedStatement = connection.prepareStatement("SELECT * FROM News WHERE news_id = ?");
+            preparedStatement.setInt(1, newsId);
+            resultSetNews = preparedStatement.executeQuery();
+            while (resultSetNews.next()) {
+                views = resultSetNews.getInt("news_views");
+            }
+            views++;
+            preparedStatement = connection.prepareStatement("UPDATE News SET news_views = ? WHERE news_id = ?");
+            preparedStatement.setInt(1, views);
+            preparedStatement.setInt(2, newsId);
+            preparedStatement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if(statement != null) {
+                this.closeStatement(statement);
+            }
+            if(resultSetNews != null) {
+                this.closeResultSet(resultSetNews);
+            }
+            this.closeConnection(connection);
+        }
     }
 
     @Override

@@ -143,4 +143,67 @@ public class MySqlTagNewsRepository extends MySqlAbstractRepository implements T
         }
         return newsList;
     }
+
+    @Override
+    public List<Tag> allTagsForNews(Integer newsId) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        ResultSet resultSetNew = null;
+
+        List<Tag> tagList = new ArrayList<>();
+        try {
+            connection = this.newConnection();
+            preparedStatement = connection.prepareStatement("SELECT * FROM TagNews WHERE news_id = ?");
+            preparedStatement.setInt(1, newsId);
+            resultSet = preparedStatement.executeQuery();
+            System.out.println(resultSet);
+            while (resultSet.next()) {
+                preparedStatement = connection.prepareStatement("SELECT * FROM Tag WHERE tag_id = ?");
+                preparedStatement.setInt(1, resultSet.getInt("tag_id"));
+                resultSetNew = preparedStatement.executeQuery();
+                while (resultSetNew.next()) {
+                    Tag tag = new Tag(resultSetNew.getInt("tag_id"), resultSetNew.getString("tag_keyword"));
+                    tagList.add(tag);
+                }
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(preparedStatement);
+            if (resultSet != null) {
+                this.closeResultSet(resultSet);
+            }
+            this.closeConnection(connection);
+        }
+        return tagList;
+    }
+
+    @Override
+    public void update(Integer newsId) {
+
+    }
+
+    @Override
+    public void delete(Integer newsId) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            connection = this.newConnection();
+            preparedStatement = connection.prepareStatement("DELETE FROM TagNews WHERE news_id = ?");
+            preparedStatement.setInt(1, newsId);
+            preparedStatement.executeUpdate();
+        } catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(preparedStatement);
+            if (resultSet != null) {
+                this.closeResultSet(resultSet);
+            }
+            this.closeConnection(connection);
+        }
+
+    }
 }

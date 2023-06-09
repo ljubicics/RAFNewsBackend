@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class News {
-    @NotNull(message = "Title field is required")
-    @NotEmpty(message = "Title field is required")
     private Integer news_id;
     @NotNull(message = "Title field is required")
     @NotEmpty(message = "Title field is required")
@@ -15,11 +13,7 @@ public class News {
     @NotNull(message = "Title field is required")
     @NotEmpty(message = "Title field is required")
     private String news_text;
-    @NotNull(message = "Title field is required")
-    @NotEmpty(message = "Title field is required")
     private long news_date_created;
-    @NotNull(message = "Title field is required")
-    @NotEmpty(message = "Title field is required")
     private int news_views;
     private User news_author;
     private Category news_category;

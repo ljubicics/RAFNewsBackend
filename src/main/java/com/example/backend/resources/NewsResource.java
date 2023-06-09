@@ -25,6 +25,11 @@ public class NewsResource {
         return this.newsService.allNews();
     }
 
+    @PATCH
+    @Path("/update/{newsId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public void updateViews(@PathParam("newsId") int newsId) {this.newsService.updateViews(newsId);}
+
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public News addUser(@Valid News news) {
